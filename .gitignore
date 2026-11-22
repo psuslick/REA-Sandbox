@@ -1,0 +1,20 @@
+# Never commit private machine samples, installers, tools, or analysis records
+repo-config.psd1
+*.exe
+*.dll
+*.msi
+*.zip
+*.7z
+*.tgz
+*.tar.gz
+node_modules/
+Tools/
+Targets/
+Output/
+Reports/
+Evidence/
+*.log
+*.jsonl
+*.pdb
+*.gzf
+.DS_Store

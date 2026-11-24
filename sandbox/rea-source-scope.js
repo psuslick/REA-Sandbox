@@ -89,13 +89,21 @@ function createScope(root, staging) {
     const elf=b.length>=16 && b.subarray(0,4).equals(Buffer.from([0x7f,0x45,0x4c,0x46]));
     const mach=b.length>=32 && [0xfeedface,0xcefaedfe,0xfeedfacf,0xcffaedfe,0xcafebabe,0xbebafeca,0xcafebabf,0xbfbafeca].includes(b.readUInt32BE(0));
     if(!validPE&&!elf&&!mach)throw Error('Unsupported executable header');
+    return stageBytes(rel,ext,b);
+  }
+  function stagePackage(rel,extensions) {
+    const seg=parts(rel,false);const ext=path.extname(seg.at(-1)).toLowerCase();
+    if(!extensions.includes(ext))throw Error('File extension not authorized for this parser');
+    return stageBytes(rel,ext,bytes(rel,MAX_BINARY));
+  }
+  function stageBytes(rel,ext,b) {
     if(stagedCount>=64 || stagedBytes+b.length>1024*1024*1024)throw Error('Guest staging quota reached; restart sandbox');
     const sha=hash(b); checked(staging,'dir'); const dir=fs.mkdtempSync(path.join(staging,'sample-')); const out=path.join(dir,'target'+ext);
     stagedCount++; stagedBytes+=b.length;
     fs.writeFileSync(out,b,{flag:'wx',mode:0o600}); if(hash(fs.readFileSync(out))!==sha)throw Error('Guest staged hash mismatch');
     return {path:out,sha256:sha,source:rel};
   }
-  return {list,read,digest,stage};
+  return {list,read,digest,stage,stagePackage};
 }
 const schemas=[
   {name:'list_source_files',description:'List one directory within the approved reaSourceInspection root, paginated. Paths are relative; empty path lists the root.',inputSchema:{type:'object',properties:{path:{type:'string'},offset:{type:'integer'},limit:{type:'integer'}},additionalProperties:false}},

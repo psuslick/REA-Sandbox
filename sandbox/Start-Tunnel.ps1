@@ -1,4 +1,4 @@
-﻿# Automatic launch INSIDE the already-provisioned v0.12.4 Windows Sandbox, in its REA PowerShell shell.
+﻿# Automatic launch INSIDE the already-provisioned v0.12.5 Windows Sandbox, in its REA PowerShell shell.
 # Refuses to run unless guest-only provisioning and firewall lockdown have passed.
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -14,7 +14,7 @@ $sampleGuest = Join-Path $guest "samples\$sampleName"
 $readyPath = Join-Path $guest 'mcp\ready.json'
 if (-not (Test-Path -LiteralPath $readyPath -PathType Leaf)) { throw 'STOP: bootstrap did not complete. Close this Sandbox and launch the new WSB.' }
 $ready = Get-Content -LiteralPath $readyPath -Raw | ConvertFrom-Json
-if ($ready.version -ne '0.12.4' -or $ready.commit -ne $env:REA_BOOTSTRAP_COMMIT) { throw 'STOP: wrong bootstrap version.' }
+if ($ready.version -ne '0.12.5' -or $ready.commit -ne $env:REA_BOOTSTRAP_COMMIT) { throw 'STOP: wrong bootstrap version.' }
 $tunnelExe = $ready.tunnel
 $allowedTunnels = @('tunnel-client.exe','tunnel-client-runtime.exe','tunnel-client-runtime-cloudflared.exe') | ForEach-Object { Join-Path $guest "tools\tunnel-client\$_" }
 if ($tunnelExe -notin $allowedTunnels) { throw 'STOP: unexpected tunnel path.' }
@@ -40,7 +40,7 @@ if ($copied -ne $expectedSha256) { throw "STOP: guest-local Intel sample copy ha
 Write-Host 'PASS: original and guest-local Intel scanner SHA-256 match.' -ForegroundColor Green
 }
 Write-Host "PASS: firewall outbound-default-deny, tunnel-client restricted to $ip TCP 443; no unexpected enabled outbound-allow rules." -ForegroundColor Green
-Write-Host 'MCP gateway will expose ONLY approved static REA tools and read-only reaSourceInspection access; optional pinned Intel sample.' -ForegroundColor Green
+Write-Host 'MCP gateway advertises the full REA catalog; scoped static calls allowed, other operations blocked.' -ForegroundColor Green
 Write-Host 'Paste the REA-VM ID and restricted key into the dialog. Never share a runtime key in ChatGPT.' -ForegroundColor Yellow
 . (Join-Path $source 'REA-Credentials.ps1')
 Remove-Item Env:\CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue
@@ -79,7 +79,7 @@ $env:TUNNEL_CLIENT_STATE_DIR = Join-Path $guest 'tunnel-state'
 $cmd = ($nodeHost.Replace('\','/') + ' ' + $guard.Replace('\','/'))
 Write-Host 'Starting authenticated OpenAI tunnel inside Windows Sandbox. Press Ctrl+C to stop.' -ForegroundColor Cyan
 'Connection attempt started (runtime key not logged).' | Set-Content -LiteralPath (Join-Path $bridge 'tunnel-status.txt') -ErrorAction SilentlyContinue
-Write-Host 'The tunnel has no arbitrary filesystem, shell, update, or execution tools.' -ForegroundColor Green
+Write-Host 'Arbitrary filesystem, shell, update, network and execution operations are blocked at invocation.' -ForegroundColor Green
     & $tunnelExe run --control-plane.tunnel-id $tunnelId --mcp.command $cmd --health.listen-addr '127.0.0.1:0'
     $exitCode = $LASTEXITCODE
     if ($exitCode -ne 0) { throw "tunnel-client exited with code $exitCode" }

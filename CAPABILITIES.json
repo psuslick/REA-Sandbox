@@ -1,0 +1,1336 @@
+{
+  "rea_version": "6.10.1",
+  "source": "Live binary_session tool_availability names, 2026-11-24; authorization reflects gateway policy, not verified provider support.",
+  "tools": [
+    {
+      "name": "act_on_build_computer",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "address_name",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "address_to_file_offset",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "analyze_function",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "analyze_javascript_application",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "analyze_swift_types",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "analyze_web_bundle",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "annotate_native_function",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "audit_release_exposure",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "batch_decompile",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "binary_overview",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "binary_session",
+      "origin": "upstream",
+      "authorization": "session_lifecycle"
+    },
+    {
+      "name": "build_call_path",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "build_reconstruction_obligation_ledger",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "capture_adb_screen",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "capture_browser_scenario",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "capture_electron_scenario",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "capture_native_ui_scenario",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "capture_process_scenario",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "capture_web_screenshot",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "check_build_task",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "close_binary",
+      "origin": "upstream",
+      "authorization": "session_lifecycle"
+    },
+    {
+      "name": "close_build_computer",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "close_frida_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "close_gdb_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "close_rizin_debug_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "collect_adb_bugreport",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "comment",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "compare_application_versions",
+      "origin": "upstream",
+      "authorization": "retained_comparison"
+    },
+    {
+      "name": "compare_artifacts",
+      "origin": "upstream",
+      "authorization": "retained_comparison"
+    },
+    {
+      "name": "compare_bundles",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "compare_functions",
+      "origin": "upstream",
+      "authorization": "retained_comparison"
+    },
+    {
+      "name": "compare_javascript_export_shapes",
+      "origin": "upstream",
+      "authorization": "retained_comparison"
+    },
+    {
+      "name": "compare_managed_members",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "compare_process_captures",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "compare_source_to_bundle",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "compare_static_and_observed_endpoints",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "compare_wasm_interfaces",
+      "origin": "upstream",
+      "authorization": "retained_comparison"
+    },
+    {
+      "name": "compare_web_captures",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "compare_web_screenshots",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "correlate_static_and_runtime",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "current_address",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "current_document",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "current_procedure",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "cutter_command",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "decode_android_resources",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "decode_interface_builder",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "decode_signal_recording",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "decompile_all",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "decompile_jeb_item",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "demangle_swift",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "discover_webmcp_tools",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "evaluate_reconstruction_coverage",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "execute_rizin_command",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "export_build_environment",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "export_environment_bundle",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "export_evidence_bundle",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "export_web_scripts",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "extract_artifact",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "extract_firmware",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "extract_uefi_firmware",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "find_changed_behavior",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "find_xrefs_to_name",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "frida_session_status",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "gdb_console",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "gdb_session_status",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "get_call_graph",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "get_evidence_bundle",
+      "origin": "upstream",
+      "authorization": "in_memory_evidence"
+    },
+    {
+      "name": "get_navigation_context",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "get_objc_classes",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "get_objc_protocols",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "goto_address",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "guided_workflows",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "hash_source_file",
+      "origin": "local",
+      "authorization": "local_source"
+    },
+    {
+      "name": "identify_flutter_build",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "import_evidence_bundle",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "import_managed_reconstruction",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inline_comment",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_adb_client",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_adb_device",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_adb_display",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_adb_package",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_adb_window",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_address_context",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "inspect_analysis_settings",
+      "origin": "upstream",
+      "authorization": "in_memory_evidence"
+    },
+    {
+      "name": "inspect_analysis_view",
+      "origin": "upstream",
+      "authorization": "in_memory_evidence"
+    },
+    {
+      "name": "inspect_android_class",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_android_jni_bindings",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_android_method",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_android_package",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_api_contract",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_apk_signature",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_apktool_client",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_apple_ips",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_artifact",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_asset_catalog",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_binary_hardening",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_binary_layout",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_byte_entropy",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_dart_aot",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_desktop_application",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_devicetree",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_dwarf_units",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_electron_fuses",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_electron_page",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_elf_debug_link",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_elf_dependencies",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_elf_notes",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_elf_unwind_ranges",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_erlang_beam",
+      "origin": "upstream",
+      "authorization": "scoped_package"
+    },
+    {
+      "name": "inspect_evm_interface",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_firmware_regions",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_go_binary",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_gpu_code_objects",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_il2cpp_metadata",
+      "origin": "upstream",
+      "authorization": "scoped_package"
+    },
+    {
+      "name": "inspect_jeb_client",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_kernel_build_config",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_kernel_module",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_keyed_archive",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_macho",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_managed_artifact",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_managed_members",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_managed_native_boundaries",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_maven_gradle_metadata",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_model_artifact",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_native_api",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "inspect_native_data_type",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "inspect_native_dispatch_metadata",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_native_exports",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_native_initializers",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_native_instruction",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "inspect_native_load_image",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "inspect_ntfs_journal",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_nuget_nupkg",
+      "origin": "upstream",
+      "authorization": "scoped_package"
+    },
+    {
+      "name": "inspect_packet_capture",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_packet_fields",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_pcap_capture",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_pcap_client",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_pe_certificates",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_pe_imports",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_pe_load_config",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_pe_resources",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_playwright_trace",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_plist",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_python_pyc",
+      "origin": "upstream",
+      "authorization": "scoped_package"
+    },
+    {
+      "name": "inspect_recorded_crash",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_rust_binary",
+      "origin": "upstream",
+      "authorization": "scoped_binary"
+    },
+    {
+      "name": "inspect_signal_decoders",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_signature",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_sqlite_database",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_uefi_firmware",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_uefi_nvram",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_v8_code_cache",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_wasm_artifact",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_web_event_listeners",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_web_network_capture",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_web_page",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_windows_shortcut",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "inspect_with_objdump",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "install_adb_package",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "instrument_with_frida",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_adb_devices",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_adb_directory",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_adb_features",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_adb_packages",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_adb_processes",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_adb_services",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_architectures",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_bookmarks",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "list_browser_targets",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_cutter_sessions",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_documents",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "list_electron_targets",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_frida_devices",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_frida_processes",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_javascript_runtime_targets",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_jeb_units",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "list_names",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "list_procedures",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "list_segments",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "list_source_files",
+      "origin": "local",
+      "authorization": "local_source"
+    },
+    {
+      "name": "list_strings",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "list_unknowns",
+      "origin": "upstream",
+      "authorization": "in_memory_evidence"
+    },
+    {
+      "name": "load_frida_script",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "mark_build_checkpoint",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "match_native_functions",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "measure_build_task",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "next_address",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "observe_javascript_runtime",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "observe_native_calls",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "observe_native_ui",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "observe_web_execution",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "observe_web_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "open_binary",
+      "origin": "upstream",
+      "authorization": "session_lifecycle"
+    },
+    {
+      "name": "open_bundle_resources",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "open_jeb_project",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "prev_address",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "procedure_address",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "procedure_assembly",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "procedure_callees",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "procedure_callers",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "procedure_info",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "procedure_pseudo_code",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "procedure_references",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "project_android_application_graph",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "project_apple_application_graph",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "project_harmony_application_graph",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "project_managed_application_graph",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "pull_adb_file",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "pull_adb_package",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "push_adb_file",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "read_adb_logcat",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "read_adb_setting",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "read_bytes",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "read_function_instructions",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "read_guidance_section",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "read_source_file",
+      "origin": "local",
+      "authorization": "local_source"
+    },
+    {
+      "name": "reconcile_javascript_runtime",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "record_build_consent",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "record_unknown",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "recover_javascript_sources",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "reset_investigation",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "resolve_adb_packages",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "resolve_containing_procedure",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "resolve_native_call_targets",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "resume_frida_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "rizin_debug_command",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "rizin_debug_session_status",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "search_android_classes",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "search_bytes",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "search_guidance",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "search_procedures",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "search_strings",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "set_address_name",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "set_addresses_names",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "set_bookmark",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "set_comment",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "set_inline_comment",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "start_adb_activity",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "start_adb_app",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "start_build_capture",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "start_build_computer",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "start_frida_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "start_gdb_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "start_rizin_debug_session",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "stop_adb_app",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "stop_build_capture",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_android_references",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_application_feature",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_call_path",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "trace_dylib_resolution",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_feature",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_javascript_semantics",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_native_ui_action",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_native_values",
+      "origin": "upstream",
+      "authorization": "active_target"
+    },
+    {
+      "name": "trace_web_module_imports",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "trace_web_source_location",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "uninstall_adb_package",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "unload_frida_script",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "unset_bookmark",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "update_analysis_settings",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "update_unknown",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "verify_managed_native_boundaries",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "verify_reconstruction",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "verify_unknown_resolution",
+      "origin": "upstream",
+      "authorization": "blocked"
+    },
+    {
+      "name": "xrefs",
+      "origin": "upstream",
+      "authorization": "active_target"
+    }
+  ]
+}

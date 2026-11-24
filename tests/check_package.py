@@ -57,3 +57,11 @@ for script in (p/'launcher/Bootstrap-Git.ps1', *sorted((p/'sandbox').glob('*.ps1
 assert g.index('WDAGUtilityAccount') < g.index('[REABootstrapConsoleInput]::DisableQuickEdit()') < g.index('robocopy.exe')
 assert 'Git copy complete in' in g and '$copyCode = $LASTEXITCODE' in g
 print('PASS: source-only tree, noninteractive Git checkout ordering, guest-local paths, WSB flags, inherited firewall and credential markers, pinned target and tunnel hotfix')
+
+# Full catalog remains explicit; manifest is a pinned named inventory, not a permission wildcard.
+cap=json.loads((p/'CAPABILITIES.json').read_text())
+assert cap['rea_version']=='6.10.1'
+assert len(cap['tools'])==266 and len({x['name'] for x in cap['tools']})==266
+assert sum(x['origin']=='upstream' for x in cap['tools'])==263
+assert sum(x['origin']=='local' for x in cap['tools'])==3
+assert all(x['authorization']=='blocked' for x in cap['tools'] if x['name'] in ['start_frida_session','capture_browser_scenario','extract_artifact','export_evidence_bundle'])

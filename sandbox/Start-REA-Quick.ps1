@@ -1,4 +1,4 @@
-﻿# REA Windows Sandbox v0.12.4: guest-only REA + restricted MCP + outbound tunnel policy.
+﻿# REA Windows Sandbox v0.12.5: guest-only REA + restricted MCP + outbound tunnel policy.
 # Run ONLY from the .wsb in Windows Sandbox; NEVER on the Windows host.
 param([string]$LaunchVersion = '')
 $ErrorActionPreference = 'Stop'
@@ -202,7 +202,7 @@ function Resolve-ToolRoot {
 
 if ($source -ine 'C:\App\repo\sandbox' -or $env:REA_BOOTSTRAP_COMMIT -notmatch '^[0-9a-f]{40}$') { throw 'Launch using the Git bootstrap.' }
 Write-Host "Source commit: $env:REA_BOOTSTRAP_COMMIT"
-Write-Host '=== REA Sandbox v0.12.4: restricted MCP setup ===' -ForegroundColor Cyan
+Write-Host '=== REA Sandbox v0.12.5: restricted MCP setup ===' -ForegroundColor Cyan
 if (-not (Test-Path -LiteralPath $mirror -PathType Container)) {
     throw "Missing mapped folder: $mirror. Open the CORRECT .wsb and check the host folder exists."
 }
@@ -412,7 +412,7 @@ Write-Host '=== LOCAL MCP SMOKE TEST (no remote key) ===' -ForegroundColor Cyan
 & $nodeExe (Join-Path $mcpDir 'rea-smoke.js')
 if ($LASTEXITCODE -ne 0) { throw 'Local MCP smoke test failed. See preceding output.' }
 Assert-REAFirewall -Tunnel $tunnelExe -Node $nodeExe -Java (Join-Path $jdkGuest 'bin\java.exe') -Ip $ipPin
-$ready = [ordered]@{ commit=$env:REA_BOOTSTRAP_COMMIT; version='0.12.4'; ip=$ipPin; tunnel=$tunnelExe; tunnelSha256=(Get-FileHash -LiteralPath $tunnelExe -Algorithm SHA256).Hash; scopeSha256=(Get-FileHash -LiteralPath (Join-Path $mcpDir 'rea-source-scope.js') -Algorithm SHA256).Hash; guardSha256=(Get-FileHash -LiteralPath (Join-Path $mcpDir 'rea-mcp-guard.js') -Algorithm SHA256).Hash }
+$ready = [ordered]@{ commit=$env:REA_BOOTSTRAP_COMMIT; version='0.12.5'; ip=$ipPin; tunnel=$tunnelExe; tunnelSha256=(Get-FileHash -LiteralPath $tunnelExe -Algorithm SHA256).Hash; scopeSha256=(Get-FileHash -LiteralPath (Join-Path $mcpDir 'rea-source-scope.js') -Algorithm SHA256).Hash; guardSha256=(Get-FileHash -LiteralPath (Join-Path $mcpDir 'rea-mcp-guard.js') -Algorithm SHA256).Hash }
 $ready | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $mcpDir 'ready.json') -Encoding Ascii
 Write-Host '=== REA VM HARDENING CHECKPOINT ===' -ForegroundColor Green
 Write-Host 'Bootstrap diagnostics saved to C:\SandboxBootstrap\REA-Exchange\bootstrap.log on the HOST.' -ForegroundColor Green
@@ -428,7 +428,7 @@ Write-Host 'C:\App is disposable. Closing this Sandbox loses installed tools and
 } catch {
     $fatal = $_
     Remove-Item -LiteralPath 'C:\App\mcp\ready.json' -Force -ErrorAction SilentlyContinue
-    Write-Warning "REA v0.12.4 provisioning stopped: $($fatal.Exception.Message)"
+    Write-Warning "REA v0.12.5 provisioning stopped: $($fatal.Exception.Message)"
     try {
         Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True -DefaultInboundAction Block -DefaultOutboundAction Block -ErrorAction Stop
         if (-not (Get-NetFirewallRule -Name 'REA-VM-EMERGENCY-BLOCK-ALL' -ErrorAction SilentlyContinue)) {

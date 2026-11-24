@@ -56,3 +56,10 @@ The Git copy was the only Robocopy call suppressing both filenames and progress.
 - Mock MCP end-to-end tests additionally verified directory pagination, UTF-8 source line paging, SHA-256, symlink and hardlink rejection, traversal/absolute/UNC/ADS/device-name rejection, unexpected arguments, document override rejection, malformed binary header rejection, and staged PE forwarding (synthetic fixture only).
 - Existing launcher files, WSB, shared dependency paths, QuickEdit setup, copy progress, firewall helper and credential helper are unchanged. Existing Intel pin remains optional. New source module is copied to guest-local MCP directory and hash-bound to readiness before tunnel startup.
 - Pending: actual Windows PowerShell and mapped-folder canonicalization/reparse behavior, real Ghidra opening of scoped binaries, authenticated tunnel exposure and client discovery of the three new source tools. The Linux mock test does not establish Windows isolation or real Ghidra behavior. No remote repository push or live permission change was performed.
+
+## v0.12.5 full discovery and scoped invocation
+
+- Live v0.12.4 REA `binary_session` reported all 263 upstream names; the full named inventory is recorded in CAPABILITIES.json. The updated gateway has not been deployed to that session.
+- Source-only tests and mock RPC tests exercise paginated discovery of the 263 names plus 3 local tools, blocked operations still advertised, scoped PE/managed/package forwarding, retained evidence comparison, rejected arbitrary paths, and earlier regression checks. Mock provider schemas and responses are fixtures, not the actual upstream implementation.
+- The release retains the same launcher, source mapping, shared dependency paths, firewall and credential helpers, Git mode and progress behavior. No npm commands, target execution, GitHub pushes or live Windows validation were performed in preparing it.
+- Pending: live upstream catalog negotiation (including client limits), real parser schemas and results, Windows filesystem behavior, Ghidra analysis, and authenticated remote tool discovery. Not all static tools are enabled: unreviewed contracts fail closed.

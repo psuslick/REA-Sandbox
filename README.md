@@ -1,6 +1,6 @@
 # REA MCP Windows Sandbox
 
-**v0.12.4 — Scoped source inspection.** This is a disposable, static-analysis-focused REA/Ghidra environment, not an air gap or a malware detonation platform. The existing launcher and shared dependency cache are unchanged. New read-only source access is limited to `C:\SandboxBootstrap\reaSourceInspection`; the legacy Intel sample is optional and retains its SHA-256 pin.
+**v0.12.5 — Full catalog discovery, scoped execution.** This is a disposable, static-analysis-focused REA/Ghidra environment, not an air gap or a malware detonation platform. The existing launcher and shared dependency cache are unchanged. New read-only source access is limited to `C:\SandboxBootstrap\reaSourceInspection`; the legacy Intel sample is optional and retains its SHA-256 pin.
 
 ## One-time migration
 
@@ -30,7 +30,7 @@ Retain the existing `git`, `node-v24.22.3-win-x64`, `jdk25`, `ghidra_12.2_PUBLIC
 
 1. On the host, create `C:\SandboxBootstrap\reaSourceInspection` and place the extracted public repository folders inside it. Do not put credentials, personal files, or private repositories there. No other shared directory moves, downloads, or launcher updates are required.
 2. Commit this version to the existing `psuslick/REA-Sandbox` infrastructure repository; do not commit inspection inputs. Close the old Sandbox and reopen the existing WSB. The normal noninteractive latest-mode clone, visible copy progress, dependency paths, credentials, and firewall remain unchanged.
-3. Enter the existing tunnel credentials in the local dialog. The smoke test verifies the new source tools and denies outside paths before accepting credentials. Refresh the MCP tool registration if the client continues to show only the old tool list.
+3. Enter the existing tunnel credentials in the local dialog. The smoke test verifies the new source tools and denies outside paths before accepting credentials. The local smoke test verifies the full 266-name catalog before accepting credentials. If the MCP client still exposes the old list, refresh its registration; the gateway cannot control client tool limits or caching.
 
 | Tool | Example arguments |
 |---|---|
@@ -39,7 +39,18 @@ Retain the existing `git`, `node-v24.22.3-win-x64`, `jdk25`, `ghidra_12.2_PUBLIC
 | `hash_source_file` | `{"path":"repo/main.go"}` |
 | `open_binary` | `{"path":"repo/build/app.exe","provider_id":"ghidra"}` |
 
-Paths use names relative to `reaSourceInspection`. Directory entries are paginated, UTF-8 source text is returned with line ranges and hashes, and binaries are copied into a fresh guest-local directory under `C:\App\source-samples` before Ghidra opens them. No file writing, arbitrary file access, source execution, shell, network download, archive extraction, alternate provider, or document-path override is exposed. Absolute paths, traversal, device names, ADS, symbolic links, detected redirections and detected hardlinks are rejected. Legacy Intel analysis still works through the existing pin when present. Limits: 20,000 entries per directory, 200 entries per page, 2 MiB source text, 400 lines/64 KB per response, 128 MiB per binary or hashed file, 64 binary stages/1 GiB per gateway process. Files are live reads of the mapped host directory, not a filesystem snapshot: do not change the inspection tree during analysis. Canonical paths and file identities are checked, but mapped-filesystem reparse behavior and concurrent modifications are not a proven security boundary. Real Windows behavior remains to be validated. The wider WSB mapping is still guest-readable as before; the scope is enforced by the MCP gateway, not a new host filesystem ACL.
+Paths use names relative to `reaSourceInspection`. Directory entries are paginated, UTF-8 source text is returned with line ranges and hashes, and binaries are copied into a fresh guest-local directory under `C:\App\source-samples` before Ghidra opens them. No host file writing, arbitrary file access, source execution, shell, network download, archive extraction, alternate provider, or document-path override is authorized. All upstream tools are discoverable; discovery does not grant permission. Absolute paths, traversal, device names, ADS, symbolic links, detected redirections and detected hardlinks are rejected. Legacy Intel analysis still works through the existing pin when present. Limits: 20,000 entries per directory, 200 entries per page, 2 MiB source text, 400 lines/64 KB per response, 128 MiB per binary or hashed file, 64 binary stages/1 GiB per gateway process. Files are live reads of the mapped host directory, not a filesystem snapshot: do not change the inspection tree during analysis. Canonical paths and file identities are checked, but mapped-filesystem reparse behavior and concurrent modifications are not a proven security boundary. Real Windows behavior remains to be validated. The wider WSB mapping is still guest-readable as before; the scope is enforced by the MCP gateway, not a new host filesystem ACL.
+
+## Capability policy (v0.12.5)
+
+The gateway advertises every upstream tool (263 in REA 6.10.1), plus the three local source tools. It preserves pagination and annotates every tool description with its authorization status. Optional output schemas are omitted to reduce catalog size; upstream input schemas are retained except that scoped paths are described as relative paths. The live tool count must equal 266 for the pinned version before credentials are requested. See `CAPABILITIES.json` for the complete named inventory obtained from the live REA session and the current policy for each name. Provider availability, input contracts, and successful execution are separate from gateway authorization.
+
+- Active-target static analysis: native function, assembly, string, call-graph, reference, and related queries, with explicit argument-key restrictions and no document-path override.
+- Scoped file parsers: PE imports, exports, certificates, resources, hardening, Go/Rust metadata, managed .NET metadata and CIL, ELF metadata and related static parsers. Paths are relative to `reaSourceInspection`; the gateway stages checked copies. NuGet, Python bytecode, BEAM and IL2CPP metadata use separately restricted extensions. Upstream parsers may reject unsupported file types or options.
+- Evidence: selected in-memory views and comparisons between retained evidence IDs only; no arbitrary evidence files or output locations.
+- Blocked: target execution, debugging, browser and network operations, filesystem exports, arbitrary archive extraction, provider installation or configuration, and operations with unreviewed contracts. All remain discoverable with explicit blocked labels. Static tools that require unsupported providers, unsafe or unreviewed inputs, or more complex argument contracts remain unavailable; no blanket authorization based on tool names or read-only hints. To extend permissions, change the version-controlled gateway policy and add a regression test. Do not relax VM isolation.
+
+The full upstream catalog may exceed a client's own tool count or schema limits. Local discovery verification proves gateway advertising, not remote ChatGPT discovery. No new dependencies, local launcher replacement, approval prompts, or firewall changes are needed.
 
 ## Security boundaries
 

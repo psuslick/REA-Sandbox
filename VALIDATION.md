@@ -41,3 +41,7 @@ The bundled default is `https://github.com/psuslick/REA-Sandbox.git`, branch `ma
 ## v0.12.1 shared dependency correction
 
 The local bootstrap now reads the previously confirmed shared Git location `C:\SandboxBootstrap\git\cmd\git.exe`. No other shared dependency paths, WSB mappings, or sandbox provisioning/guard code changed. The CMD launcher checks for its sibling PowerShell bootstrap and reports the missing path explicitly. Source checks and mock tests are rerun below; live Windows validation remains pending.
+
+## v0.12.2 automatic Git launch
+
+Default mode is `latest`; legacy `confirm-latest` also launches without a prompt. Optional pinned mode remains. The user's live v0.12.1 output confirmed portable Git copying and GitHub cloning worked. This revision removes only the interactive approval, updates documentation and checks, and keeps the existing commit identity, tree validation, detached checkout, guest paths, WSB and provisioning/guard scripts. The source-only checks and mock MCP tests passed for v0.12.2. Windows execution of the changed bootstrap remains untested here. Automatic latest mode trusts the repository branch, including future changes.

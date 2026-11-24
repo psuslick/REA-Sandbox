@@ -26,9 +26,9 @@ try {
     $cfg = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
     if ($cfg.repository -cnotmatch '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git$' -or $cfg.repository -match '/(?:OWNER|REPOSITORY)(?:/|\.git$)') { throw 'Configure the exact public GitHub HTTPS clone URL in launcher\repo.json or repo.local.json.' }
     if ($cfg.branch -cnotmatch '^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$' -or $cfg.branch -match '\.\.|//|/\.|\.lock(?:/|$)|/$') { throw 'Invalid branch.' }
-    if ($cfg.mode -cnotin @('pinned','confirm-latest')) { throw 'Invalid mode.' }
+    if ($cfg.mode -cnotin @('pinned','latest','confirm-latest')) { throw 'Invalid mode.' }
     if ($cfg.mode -ceq 'pinned' -and $cfg.commit -cnotmatch '^[0-9a-f]{40}$') { throw 'Pinned mode requires a full lowercase Git commit SHA.' }
-    if ($cfg.mode -ceq 'confirm-latest' -and $cfg.commit -ne '') { throw 'Clear commit for confirm-latest mode.' }
+    if ($cfg.mode -cne 'pinned' -and $cfg.commit -ne '') { throw 'Clear commit for latest mode.' }
     $src = Join-Path $mirror 'git'
     if (-not (Test-Path -LiteralPath (Join-Path $src 'cmd\git.exe') -PathType Leaf)) { throw 'Existing shared Git not found: C:\SandboxBootstrap\git\cmd\git.exe. No download or host changes attempted.' }
     Write-Host "Using existing shared Git: $src" -ForegroundColor Cyan
@@ -49,11 +49,9 @@ try {
         $commit = $cfg.commit
         & $git @opts -C $repo merge-base --is-ancestor $commit $tip
         if ($LASTEXITCODE -ne 0) { throw 'Pinned commit not found in configured branch history.' }
-    } else {
-        Write-Host "Commit: $tip" -ForegroundColor Yellow
-        Write-Host "Verify this is your reviewed commit on GitHub before allowing launcher code to execute."
-        if ((Read-Host 'Type the full commit SHA to approve, or anything else to stop') -cne $tip) { throw 'Commit not approved.' }
     }
+    # Latest mode (including legacy confirm-latest config) runs without an interactive approval.
+    Write-Host "Selected launcher commit: $commit" -ForegroundColor Cyan
     # Reject symlinks and submodules in this trusted launcher checkout before materializing it.
     $tree = @(& $git @opts -C $repo ls-tree -r --full-tree $commit)
     if ($LASTEXITCODE -ne 0 -or $tree.Count -eq 0 -or @($tree | Where-Object { $_ -notmatch '^100(?:644|755) blob [0-9a-f]{40}\t' }).Count -ne 0) { throw 'Unexpected Git tree modes (symlink/submodule or invalid tree).' }
@@ -64,7 +62,7 @@ try {
     $entry = Join-Path $repo 'sandbox\Start-REA-Quick.ps1'
     if (-not (Test-Path -LiteralPath $entry -PathType Leaf)) { throw 'Repository lacks expected sandbox entrypoint.' }
     $env:REA_BOOTSTRAP_COMMIT = $commit
-    Write-Host "Approved launcher commit: $commit" -ForegroundColor Green
+    Write-Host "Launching commit: $commit" -ForegroundColor Green
     & $entry -LaunchVersion git-v1
 } catch {
     # Never initiate a tunnel after a failed clone or checkout.

@@ -14,7 +14,8 @@ assert r'C:\SandboxBootstrap\launcher\Launch-REA.cmd' in x.findtext('LogonComman
 assert '-STA' in cmd and 'Bootstrap-Git.ps1' in cmd
 assert [(f.findtext('SandboxFolder'),f.findtext('ReadOnly')) for f in x.findall('MappedFolders/MappedFolder')]==[(r'C:\SandboxBootstrap','true'),(r'C:\REA-Exchange','false')]
 assert g.index('WDAGUtilityAccount')<g.index('robocopy.exe')<g.index('clone --no-checkout')<g.index('merge-base --is-ancestor')<g.index('ls-tree -r')<g.index('checkout --detach')<g.index('& $entry -LaunchVersion git-v1')
-assert "Read-Host 'Type the full commit SHA" in g and 'GIT_CONFIG_NOSYSTEM' in g and 'http.sslVerify=true' in g
+assert 'Read-Host' not in g and 'Commit not approved' not in g and 'GIT_CONFIG_NOSYSTEM' in g and 'http.sslVerify=true' in g
+assert "@('pinned','latest','confirm-latest')" in g and '$commit = $tip' in g and 'Launching commit: $commit' in g
 assert 'GIT_ALLOW_PROTOCOL' in g and 'credential.helper=' in g and 'core.hooksPath=' in g and 'submodule.recurse=false' in g
 assert "Join-Path $guest 'repo'" in g and "Join-Path $guest 'tools\\git'" in g
 assert "Join-Path $mirror 'git'" in g and "Join-Path $src 'cmd\\git.exe'" in g
@@ -39,7 +40,7 @@ sha='dd3ff68bc5c326691e787a8967807a144535fcb334e315c42053bf68ac9df25b'
 assert sha in b and sha in t and sha in (p/'sandbox/rea-mcp-guard.js').read_text()
 assert not any(f.suffix.lower() in ('.exe','.dll','.zip','.jar','.msi') for f in p.rglob('*') if f.is_file() and '.git' not in f.parts)
 assert not (p/'launcher/repo.local.json').exists()
-assert json.loads((p/'launcher/repo.json').read_text()) == {'repository':'https://github.com/psuslick/REA-Sandbox.git','branch':'main','commit':'','mode':'confirm-latest'}
+assert json.loads((p/'launcher/repo.json').read_text()) == {'repository':'https://github.com/psuslick/REA-Sandbox.git','branch':'main','commit':'','mode':'latest'}
 assert g.index("'launcher\\repo.json'") < g.index("'launcher\\repo.local.json'") < g.index('Get-Content -LiteralPath $configPath')
 assert 'if (Test-Path -LiteralPath $localConfig -PathType Leaf) { $configPath = $localConfig }' in g
-print('PASS: source-only tree, Git approval and checkout ordering, guest-local paths, WSB flags, inherited firewall and credential markers, pinned target and tunnel hotfix')
+print('PASS: source-only tree, noninteractive Git checkout ordering, guest-local paths, WSB flags, inherited firewall and credential markers, pinned target and tunnel hotfix')

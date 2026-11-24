@@ -2,5 +2,5 @@
   "repository": "https://github.com/psuslick/REA-Sandbox.git",
   "branch": "main",
   "commit": "",
-  "mode": "confirm-latest"
+  "mode": "latest"
 }

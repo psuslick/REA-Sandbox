@@ -43,4 +43,12 @@ assert not (p/'launcher/repo.local.json').exists()
 assert json.loads((p/'launcher/repo.json').read_text()) == {'repository':'https://github.com/psuslick/REA-Sandbox.git','branch':'main','commit':'','mode':'latest'}
 assert g.index("'launcher\\repo.json'") < g.index("'launcher\\repo.local.json'") < g.index('Get-Content -LiteralPath $configPath')
 assert 'if (Test-Path -LiteralPath $localConfig -PathType Leaf) { $configPath = $localConfig }' in g
+# Regression: never hide file names AND progress from any dependency copy.
+for script in (p/'launcher/Bootstrap-Git.ps1', *sorted((p/'sandbox').glob('*.ps1'))):
+    for line in script.read_text(encoding='utf-8-sig').splitlines():
+        if 'robocopy.exe' in line.lower():
+            flags=line.upper().split()
+            assert '/NP' not in flags and '/NFL' not in flags and '/ETA' in flags, (script, line)
+assert g.index('WDAGUtilityAccount') < g.index('[REABootstrapConsoleInput]::DisableQuickEdit()') < g.index('robocopy.exe')
+assert 'Git copy complete in' in g and '$copyCode = $LASTEXITCODE' in g
 print('PASS: source-only tree, noninteractive Git checkout ordering, guest-local paths, WSB flags, inherited firewall and credential markers, pinned target and tunnel hotfix')

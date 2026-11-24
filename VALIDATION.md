@@ -45,3 +45,7 @@ The local bootstrap now reads the previously confirmed shared Git location `C:\S
 ## v0.12.2 automatic Git launch
 
 Default mode is `latest`; legacy `confirm-latest` also launches without a prompt. Optional pinned mode remains. The user's live v0.12.1 output confirmed portable Git copying and GitHub cloning worked. This revision removes only the interactive approval, updates documentation and checks, and keeps the existing commit identity, tree validation, detached checkout, guest paths, WSB and provisioning/guard scripts. The source-only checks and mock MCP tests passed for v0.12.2. Windows execution of the changed bootstrap remains untested here. Automatic latest mode trusts the repository branch, including future changes.
+
+## v0.12.3 visible copy progress
+
+The Git copy was the only Robocopy call suppressing both filenames and progress. Removed `/NP` and `/NFL`, added `/ETA`, and added a copy start/completion message with elapsed time. The preexisting QuickEdit adjustment is also applied before Git copying, using a distinct class name to avoid collisions with the later provisioning script. All later Robocopy invocations already expose progress and remain unchanged. Added regression assertions covering all Robocopy calls and QuickEdit ordering. The source-only checks and mock MCP tests are run below; live Windows console rendering and QuickEdit behavior remain unverified. No dependency layout, repository mode, WSB, security policy or provisioning scripts changed.

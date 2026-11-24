@@ -7,6 +7,29 @@ $guest = 'C:\App'
 $repo = Join-Path $guest 'repo'
 $gitRoot = Join-Path $guest 'tools\git'
 $git = Join-Path $gitRoot 'cmd\git.exe'
+# Optional guest-only prevention for Windows Console QuickEdit/selection pauses.
+# The script does not depend on success; the event is recorded in diagnostics.
+try {
+    Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class REABootstrapConsoleInput {
+  [DllImport("kernel32.dll", SetLastError=true)] public static extern IntPtr GetStdHandle(int n);
+  [DllImport("kernel32.dll", SetLastError=true)] public static extern bool GetConsoleMode(IntPtr h, out uint mode);
+  [DllImport("kernel32.dll", SetLastError=true)] public static extern bool SetConsoleMode(IntPtr h, uint mode);
+  public static bool DisableQuickEdit() {
+    IntPtr h = GetStdHandle(-10); uint mode;
+    if (h == IntPtr.Zero || h == new IntPtr(-1) || !GetConsoleMode(h, out mode)) return false;
+    return SetConsoleMode(h, (mode | 0x0080u) & ~0x0040u);
+  }
+}
+'@ -ErrorAction Stop
+    if ([REABootstrapConsoleInput]::DisableQuickEdit()) { Write-Host 'Console QuickEdit disabled for this session.' }
+    else { Write-Warning 'Could not disable QuickEdit; avoid selecting console text while copying.' }
+} catch {
+    Write-Warning 'Console QuickEdit adjustment unavailable; not fatal.'
+}
+
 try {
     if (Test-Path -LiteralPath $guest) { throw 'Expected fresh guest workspace. Close and reopen Sandbox.' }
     New-Item -ItemType Directory -Path $guest, (Join-Path $guest 'temp'), (Join-Path $guest 'git-empty-hooks'), (Join-Path $guest 'git-empty-template') -Force | Out-Null
@@ -34,8 +57,13 @@ try {
     Write-Host "Using existing shared Git: $src" -ForegroundColor Cyan
     # All Git executable files and all clone writes remain guest-local.
     New-Item -ItemType Directory -Path $gitRoot -Force | Out-Null
-    & "$env:SystemRoot\System32\robocopy.exe" $src $gitRoot /E /XJ /R:1 /W:1 /NP /NFL /NDL
-    if ($LASTEXITCODE -ge 8 -or -not (Test-Path -LiteralPath $git -PathType Leaf)) { throw 'Shared Git guest copy failed.' }
+    Write-Host 'Copying Git into disposable guest storage (file names, percent and ETA shown)...' -ForegroundColor Yellow
+    $copyTimer = [System.Diagnostics.Stopwatch]::StartNew()
+    & "$env:SystemRoot\System32\robocopy.exe" $src $gitRoot /E /XJ /R:1 /W:1 /ETA /NDL
+    $copyCode = $LASTEXITCODE
+    $copyTimer.Stop()
+    if ($copyCode -ge 8 -or -not (Test-Path -LiteralPath $git -PathType Leaf)) { throw "Shared Git guest copy failed (robocopy $copyCode)." }
+    Write-Host "Git copy complete in $($copyTimer.Elapsed.ToString('hh\:mm\:ss')) (robocopy $copyCode)." -ForegroundColor Green
     $opts = @('-c','credential.helper=','-c','http.sslVerify=true','-c','http.followRedirects=false','-c','core.hooksPath=C:/App/git-empty-hooks','-c','protocol.file.allow=never','-c','protocol.ext.allow=never','-c','submodule.recurse=false','-c','core.protectNTFS=true')
     & $git @opts --version
     if ($LASTEXITCODE -ne 0) { throw 'Git failed.' }

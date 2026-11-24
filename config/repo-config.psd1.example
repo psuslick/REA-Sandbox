@@ -1,6 +1,6 @@
 # COPY to C:\SandboxBootstrap\REA\repo-config.psd1, outside the public Git repository.
 # Create and publish the GitHub repository first; do not leave the placeholder URL here.
 @{
-    RepositoryUrl = 'https://github.com/YOURNAME/rea-sandbox.git'
+    RepositoryUrl = 'https://github.com/psuslick/REA-Sandbox'
     Ref = 'main'
 }

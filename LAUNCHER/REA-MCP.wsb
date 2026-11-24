@@ -1,0 +1,25 @@
+<Configuration>
+  <VGpu>Disable</VGpu>
+  <Networking>Default</Networking>
+  <MemoryInMB>8192</MemoryInMB>
+  <ProtectedClient>Enable</ProtectedClient>
+  <ClipboardRedirection>Enable</ClipboardRedirection>
+  <PrinterRedirection>Disable</PrinterRedirection>
+  <AudioInput>Disable</AudioInput>
+  <VideoInput>Disable</VideoInput>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>C:\SandboxBootstrap</HostFolder>
+      <SandboxFolder>C:\SandboxBootstrap</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>C:\SandboxBootstrap\REA-Exchange</HostFolder>
+      <SandboxFolder>C:\REA-Exchange</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>cmd.exe /d /c start "" cmd.exe /d /k C:\SandboxBootstrap\launcher\Launch-REA.cmd</Command>
+  </LogonCommand>
+</Configuration>

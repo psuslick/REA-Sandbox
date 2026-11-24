@@ -20,6 +20,11 @@ assert 'GIT_ALLOW_PROTOCOL' in g and 'credential.helper=' in g and 'core.hooksPa
 assert "Join-Path $guest 'repo'" in g and "Join-Path $guest 'tools\\git'" in g
 assert "Join-Path $mirror 'git'" in g and "Join-Path $src 'cmd\\git.exe'" in g
 assert 'mingit' not in g.lower()
+assert "Join-Path $mirror 'reaSourceInspection'" in b
+assert 'scopeSha256' in b and 'scopeSha256' in t
+assert "/reaSourceInspection/" in (p/'.gitignore').read_text()
+assert "reaSourceInspection" in (p/'sandbox/rea-mcp-guard.js').read_text()
+assert "REA_TEST_SOURCE_ROOT" in (p/'sandbox/rea-smoke.js').read_text()
 assert '%~dp0Bootstrap-Git.ps1' in cmd and 'if not exist' in cmd
 assert "Join-Path $mirror 'node-v24.22.3-win-x64'" in b
 assert "Join-Path $mirror 'jdk25'" in b and "Join-Path $mirror 'ghidra_12.2_PUBLIC'" in b

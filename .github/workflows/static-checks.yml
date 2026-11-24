@@ -10,5 +10,5 @@ jobs:
         with:
           persist-credentials: false
       - run: python3 tests/check_package.py
-      - run: node --check sandbox/rea-mcp-guard.js && node --check sandbox/rea-smoke.js
+      - run: node --check sandbox/rea-mcp-guard.js && node --check sandbox/rea-smoke.js && node --check sandbox/rea-source-scope.js
       - run: REA_GUARD_TEST=1 REA_GUARD_REA="$PWD/tests/mock-rea.js" CONTROL_PLANE_API_KEY=mock OPENAI_API_KEY=mock CLOUDFLARED_TOKEN=mock node sandbox/rea-smoke.js

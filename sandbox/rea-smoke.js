@@ -4,8 +4,26 @@ const {spawn} = require('node:child_process');
 const readline = require('node:readline');
 const path = require('node:path');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const crypto = require('node:crypto');
 const mock = process.env.REA_GUARD_TEST === '1' && process.platform !== 'win32';
 if (!mock && process.platform !== 'win32') throw new Error('Guest only');
+let fixture;
+if(mock){
+ fixture=fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()),'rea-scope-test-'));
+ const root=path.join(fixture,'source'), stage=path.join(fixture,'staging');
+ fs.mkdirSync(root);fs.mkdirSync(stage);fs.mkdirSync(path.join(root,'repo'));
+ fs.writeFileSync(path.join(root,'repo','main.cs'),'line one\nline two\nline three');
+ fs.writeFileSync(path.join(fixture,'outside.txt'),'not authorized');
+ fs.symlinkSync(path.join(fixture,'outside.txt'),path.join(root,'escape.txt'));
+ fs.symlinkSync(fixture,path.join(root,'escape-dir'));
+ fs.linkSync(path.join(fixture,'outside.txt'),path.join(root,'hardlink.txt'));
+ const pe=Buffer.alloc(128);pe.write('MZ');pe.writeUInt32LE(64,60);pe.writeUInt32LE(0x4550,64);
+ fs.writeFileSync(path.join(root,'repo','sample.exe'),pe);
+ fs.writeFileSync(path.join(root,'repo','not.exe'),'not a PE');
+ process.env.REA_TEST_SOURCE_ROOT=root;process.env.REA_TEST_STAGE_ROOT=stage;
+}
 const child = spawn(process.execPath,[path.join(__dirname,'rea-mcp-guard.js')],{stdio:['pipe','pipe','inherit'],windowsHide:true,env:process.env});
 const rl = readline.createInterface({input:child.stdout,crlfDelay:Infinity});
 let id=0; const waiting=new Map();
@@ -18,7 +36,7 @@ async function main(){
  const init=ok(await request('initialize',{protocolVersion:'2025-03-26',capabilities:{},clientInfo:{name:'REA offline smoke',version:'0.12.0'}}));assert(init.protocolVersion);
  child.stdin.write(JSON.stringify({jsonrpc:'2.0',method:'notifications/initialized'})+'\n');
  const tools=ok(await request('tools/list',{})).tools;assert(Array.isArray(tools));const names=tools.map(t=>t.name);
- for(const name of ['open_binary','close_binary','binary_session'])assert(names.includes(name),'Missing required tool: '+name);
+ for(const name of ['open_binary','close_binary','binary_session','list_source_files','read_source_file','hash_source_file'])assert(names.includes(name),'Missing required tool: '+name);
  assert(!names.includes('execute')&&!names.includes('run_command'),'Unexpected tools');
  const call=(name,args)=>request('tools/call',{name,arguments:args},120000);
  assert((await call('run_command',{})).error,'Disallowed tool accepted');
@@ -27,7 +45,32 @@ async function main(){
  assert((await call('close_binary',{snapshot_path:'C:\\REA-Exchange\\out'})).error,'Snapshot accepted');
  assert((await call('binary_session',{expected_server_path:'C:\\Windows'})).error,'Session path accepted');
  assert((await request('resources/list',{})).error,'Resources accepted');
- ok(await call('open_binary',{}));ok(await call('binary_session',{}));ok(await call('close_binary',{}));
- console.log('PASS: initialize, filtered tools/list ('+names.length+' tools), policy denials, pinned static open/session/close. No sample executed.');
+ const data = m=>JSON.parse(ok(m).content[0].text);
+ const rootList=data(await call('list_source_files',{})); assert(Array.isArray(rootList.entries));
+ for(const bad of ['..','../outside.txt','..\\outside.txt','C:\\Windows','\\\\server\\share','/etc/passwd','repo/main.cs:secret','repo/../main.cs','repo/CON','repo/main.cs.']) {
+  assert((await call('read_source_file',{path:bad})).error,'Escaped path: '+bad);
+  assert((await call('hash_source_file',{path:bad})).error,'Escaped hash: '+bad);
+ }
+ assert((await call('list_source_files',{path:'..'})).error,'Parent listing allowed');
+ assert((await call('list_source_files',{path:'',limit:999999})).error,'Unbounded listing');
+ assert((await call('read_source_file',{path:'anything',destination:'out'})).error,'Unexpected argument');
+ assert((await call('list_strings',{document:'C:\\Windows\\System32\\cmd.exe'})).error,'Document override allowed');
+ if(mock){
+  assert(rootList.entries.some(x=>x.name==='repo'&&x.type==='directory'));
+  assert(rootList.entries.some(x=>x.name==='escape.txt'&&x.type==='blocked'));
+  assert(rootList.entries.some(x=>x.name==='hardlink.txt'&&x.type==='blocked'));
+  const page=data(await call('list_source_files',{path:'repo',limit:1}));assert.equal(page.next_offset,1);
+  const read=data(await call('read_source_file',{path:'repo/main.cs',start_line:2,line_count:1}));assert.equal(read.text,'line two');assert.equal(read.next_line,3);
+  const sha=crypto.createHash('sha256').update('line one\nline two\nline three').digest('hex');assert.equal(read.sha256,sha);
+  assert.equal(data(await call('hash_source_file',{path:'repo/main.cs'})).sha256,sha);
+  for(const bad of ['escape.txt','escape-dir/outside.txt','hardlink.txt'])assert((await call('read_source_file',{path:bad})).error,'Link accepted: '+bad);
+  assert((await call('open_binary',{path:'repo/not.exe'})).error,'Invalid header accepted');
+  assert((await call('open_binary',{path:'repo/main.cs'})).error,'Source opened as binary');
+  ok(await call('open_binary',{path:'repo/sample.exe'}));ok(await call('binary_session',{}));ok(await call('close_binary',{}));
+ }
+ const pin='C:\\App\\samples\\Intel_HST_f59fdc8a-40f4-48f3-baa6-51b9a27e64b1_3.exe';
+ if(mock||fs.existsSync(pin)){ok(await call('open_binary',{}));ok(await call('binary_session',{}));ok(await call('close_binary',{}));}
+ else {assert((await call('open_binary',{})).error);ok(await call('binary_session',{}));console.log('INFO: no legacy Intel sample; live Ghidra open test skipped.');}
+ console.log('PASS: filtered tools/list ('+names.length+' tools), scoped directory/read/hash policy, traversal denials, optional pinned static open/session/close. No sample executed.');
 }
-main().catch(e=>{console.error('MCP smoke failure: '+e.message);process.exitCode=1;}).finally(()=>{child.stdin.end();rl.close();const timer=setTimeout(()=>child.kill(),3000);timer.unref();child.on('exit',()=>clearTimeout(timer));});
+main().catch(e=>{console.error('MCP smoke failure: '+e.message);process.exitCode=1;}).finally(()=>{child.stdin.end();rl.close();const timer=setTimeout(()=>child.kill(),3000);timer.unref();child.on('exit',()=>{clearTimeout(timer);if(fixture)fs.rmSync(fixture,{recursive:true,force:true});});});

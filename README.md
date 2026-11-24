@@ -1,6 +1,6 @@
 # REA MCP Windows Sandbox
 
-**v0.12.3 — Visible copy progress.** This is a disposable, static-analysis-focused REA/Ghidra environment, not an air gap or a malware detonation platform. This revision deliberately retains the v0.11.0 Intel-only target allowlist. Changing targets is a separate security-sensitive change.
+**v0.12.4 — Scoped source inspection.** This is a disposable, static-analysis-focused REA/Ghidra environment, not an air gap or a malware detonation platform. The existing launcher and shared dependency cache are unchanged. New read-only source access is limited to `C:\SandboxBootstrap\reaSourceInspection`; the legacy Intel sample is optional and retains its SHA-256 pin.
 
 ## One-time migration
 
@@ -24,11 +24,26 @@ Commit and push reviewed changes to the configured branch. Close the old VM and 
 
 ## Required existing local tools and analysis input
 
-Retain the existing `git`, `node-v24.22.3-win-x64`, `jdk25`, `ghidra_12.2_PUBLIC` directories and official tunnel-client Windows AMD64 archive (v0.0.21 was used in the earlier workflow; verify official release provenance independently). Keep the Intel file `Intel_HST_f59fdc8a-40f4-48f3-baa6-51b9a27e64b1_3.exe` in the read-only host root. Expected SHA-256: `dd3ff68bc5c326691e787a8967807a144535fcb334e315c42053bf68ac9df25b`. The binary is deliberately **not** included in or published to this repository. The two Galactic Racer ZIPs are not launch inputs in this revision.
+Retain the existing `git`, `node-v24.22.3-win-x64`, `jdk25`, `ghidra_12.2_PUBLIC` directories and official tunnel-client Windows AMD64 archive (v0.0.21 was used in the earlier workflow; verify official release provenance independently). Optionally retain the Intel file `Intel_HST_f59fdc8a-40f4-48f3-baa6-51b9a27e64b1_3.exe` in the read-only host root. Expected SHA-256: `dd3ff68bc5c326691e787a8967807a144535fcb334e315c42053bf68ac9df25b`. The binary is deliberately **not** included in or published to this repository. The Intel sample is no longer required to start REA. Source archives must be extracted by the operator into the designated inspection directory; the gateway does not unpack or execute archives.
+
+## Inspect a repository (existing launcher users)
+
+1. On the host, create `C:\SandboxBootstrap\reaSourceInspection` and place the extracted public repository folders inside it. Do not put credentials, personal files, or private repositories there. No other shared directory moves, downloads, or launcher updates are required.
+2. Commit this version to the existing `psuslick/REA-Sandbox` infrastructure repository; do not commit inspection inputs. Close the old Sandbox and reopen the existing WSB. The normal noninteractive latest-mode clone, visible copy progress, dependency paths, credentials, and firewall remain unchanged.
+3. Enter the existing tunnel credentials in the local dialog. The smoke test verifies the new source tools and denies outside paths before accepting credentials. Refresh the MCP tool registration if the client continues to show only the old tool list.
+
+| Tool | Example arguments |
+|---|---|
+| `list_source_files` | `{"path":"","offset":0,"limit":100}` |
+| `read_source_file` | `{"path":"repo/main.go","start_line":1,"line_count":100}` |
+| `hash_source_file` | `{"path":"repo/main.go"}` |
+| `open_binary` | `{"path":"repo/build/app.exe","provider_id":"ghidra"}` |
+
+Paths use names relative to `reaSourceInspection`. Directory entries are paginated, UTF-8 source text is returned with line ranges and hashes, and binaries are copied into a fresh guest-local directory under `C:\App\source-samples` before Ghidra opens them. No file writing, arbitrary file access, source execution, shell, network download, archive extraction, alternate provider, or document-path override is exposed. Absolute paths, traversal, device names, ADS, symbolic links, detected redirections and detected hardlinks are rejected. Legacy Intel analysis still works through the existing pin when present. Limits: 20,000 entries per directory, 200 entries per page, 2 MiB source text, 400 lines/64 KB per response, 128 MiB per binary or hashed file, 64 binary stages/1 GiB per gateway process. Files are live reads of the mapped host directory, not a filesystem snapshot: do not change the inspection tree during analysis. Canonical paths and file identities are checked, but mapped-filesystem reparse behavior and concurrent modifications are not a proven security boundary. Real Windows behavior remains to be validated. The wider WSB mapping is still guest-readable as before; the scope is enforced by the MCP gateway, not a new host filesystem ACL.
 
 ## Security boundaries
 
-Git clone is a new provisioning-time network operation, before the existing guest firewall lockdown. Public source is not inherently trustworthy. Only clone this trusted infrastructure repo. Automatic latest mode trusts every new commit to the configured branch; a compromised repository could execute untrusted launcher code before guest firewall lockdown. Optional pinned mode remains available. Git uses HTTPS with certificate checking, no credential helper, no submodule recursion, no checkout until commit resolution and tree validation, no hooks and no system/global configuration. Symlink and submodule entries are rejected. The clone is disposable and not mapped to the host. No Git or npm network permissions are added to the post-provision firewall. The existing REA 6.10.1 pin, scoped doctor, MCP smoke, one-file SHA-256 pin, effective firewall check, guest-only npm, and local credential flow are retained. The prior tunnel command hotfix (forward slashes) is included.
+Git clone is a new provisioning-time network operation, before the existing guest firewall lockdown. Public source is not inherently trustworthy. Only clone this trusted infrastructure repo. Automatic latest mode trusts every new commit to the configured branch; a compromised repository could execute untrusted launcher code before guest firewall lockdown. Optional pinned mode remains available. Git uses HTTPS with certificate checking, no credential helper, no submodule recursion, no checkout until commit resolution and tree validation, no hooks and no system/global configuration. Symlink and submodule entries are rejected. The clone is disposable and not mapped to the host. No Git or npm network permissions are added to the post-provision firewall. The existing REA 6.10.1 pin, scoped doctor, MCP smoke, optional legacy SHA-256 pin and scoped binary staging, effective firewall check, guest-only npm, and local credential flow are retained. The prior tunnel command hotfix (forward slashes) is included.
 
 The source root is read-only from the guest, not unreadable. Clipboard sharing is enabled as before for credentials; avoid unrelated clipboard secrets and disable sharing after use if supported. The diagnostic exchange is writable by the guest; its contents are untrusted. The guest firewall is not host-enforced. Neither the guard nor a Git pin is a guarantee against malicious code or VM escape. No target execution is intended. Do not put any unrelated data in the mapped root. If provisioning fails, close the VM and start a fresh one. No credentials should be entered after failure.
 

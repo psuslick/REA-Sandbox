@@ -1,4 +1,4 @@
-﻿# Automatic launch INSIDE the already-provisioned v0.12.0 Windows Sandbox, in its REA PowerShell shell.
+﻿# Automatic launch INSIDE the already-provisioned v0.12.4 Windows Sandbox, in its REA PowerShell shell.
 # Refuses to run unless guest-only provisioning and firewall lockdown have passed.
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -14,20 +14,23 @@ $sampleGuest = Join-Path $guest "samples\$sampleName"
 $readyPath = Join-Path $guest 'mcp\ready.json'
 if (-not (Test-Path -LiteralPath $readyPath -PathType Leaf)) { throw 'STOP: bootstrap did not complete. Close this Sandbox and launch the new WSB.' }
 $ready = Get-Content -LiteralPath $readyPath -Raw | ConvertFrom-Json
-if ($ready.version -ne '0.12.0' -or $ready.commit -ne $env:REA_BOOTSTRAP_COMMIT) { throw 'STOP: wrong bootstrap version.' }
+if ($ready.version -ne '0.12.4' -or $ready.commit -ne $env:REA_BOOTSTRAP_COMMIT) { throw 'STOP: wrong bootstrap version.' }
 $tunnelExe = $ready.tunnel
 $allowedTunnels = @('tunnel-client.exe','tunnel-client-runtime.exe','tunnel-client-runtime-cloudflared.exe') | ForEach-Object { Join-Path $guest "tools\tunnel-client\$_" }
 if ($tunnelExe -notin $allowedTunnels) { throw 'STOP: unexpected tunnel path.' }
 $guard = Join-Path $guest 'mcp\rea-mcp-guard.js'
 $nodeHost = Join-Path $guest 'tools\node\node.exe'
 $java = Join-Path $guest 'tools\jdk25\bin\java.exe'
-foreach ($p in @($sampleHost, $sampleGuest, $tunnelExe, $guard, $nodeHost, $java)) {
+$scopeModule = Join-Path $guest 'mcp\rea-source-scope.js'
+foreach ($p in @($tunnelExe, $guard, $scopeModule, $nodeHost, $java)) {
     if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { throw "STOP: missing $p." }
 }
+if ((Get-FileHash -LiteralPath $scopeModule -Algorithm SHA256).Hash -ne $ready.scopeSha256) { throw 'STOP: source scope module changed after checkpoint.' }
 if ((Get-FileHash -LiteralPath $tunnelExe -Algorithm SHA256).Hash -ne $ready.tunnelSha256 -or (Get-FileHash -LiteralPath $guard -Algorithm SHA256).Hash -ne $ready.guardSha256) { throw 'STOP: staged tunnel or guard changed after checkpoint.' }
 . (Join-Path $source 'REA-Common.ps1')
 $ip = $ready.ip
 Assert-REAFirewall -Tunnel $tunnelExe -Node $nodeHost -Java $java -Ip $ip
+if (Test-Path -LiteralPath $sampleGuest -PathType Leaf) {
 $original = (Get-FileHash -LiteralPath $sampleHost -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($original -ne $expectedSha256) { throw "STOP: original Intel sample hash mismatch: $original" }
 # The guest-local sample was staged automatically after firewall lockdown.
@@ -35,8 +38,9 @@ if ($original -ne $expectedSha256) { throw "STOP: original Intel sample hash mis
 $copied = (Get-FileHash -LiteralPath $sampleGuest -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($copied -ne $expectedSha256) { throw "STOP: guest-local Intel sample copy hash mismatch: $copied" }
 Write-Host 'PASS: original and guest-local Intel scanner SHA-256 match.' -ForegroundColor Green
+}
 Write-Host "PASS: firewall outbound-default-deny, tunnel-client restricted to $ip TCP 443; no unexpected enabled outbound-allow rules." -ForegroundColor Green
-Write-Host 'MCP gateway will expose ONLY approved static REA tools and exactly one pinned binary path.' -ForegroundColor Green
+Write-Host 'MCP gateway will expose ONLY approved static REA tools and read-only reaSourceInspection access; optional pinned Intel sample.' -ForegroundColor Green
 Write-Host 'Paste the REA-VM ID and restricted key into the dialog. Never share a runtime key in ChatGPT.' -ForegroundColor Yellow
 . (Join-Path $source 'REA-Credentials.ps1')
 Remove-Item Env:\CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue

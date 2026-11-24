@@ -1,4 +1,4 @@
-﻿# REA Windows Sandbox v0.12.0: guest-only REA + restricted MCP + outbound tunnel policy.
+﻿# REA Windows Sandbox v0.12.4: guest-only REA + restricted MCP + outbound tunnel policy.
 # Run ONLY from the .wsb in Windows Sandbox; NEVER on the Windows host.
 param([string]$LaunchVersion = '')
 $ErrorActionPreference = 'Stop'
@@ -202,7 +202,7 @@ function Resolve-ToolRoot {
 
 if ($source -ine 'C:\App\repo\sandbox' -or $env:REA_BOOTSTRAP_COMMIT -notmatch '^[0-9a-f]{40}$') { throw 'Launch using the Git bootstrap.' }
 Write-Host "Source commit: $env:REA_BOOTSTRAP_COMMIT"
-Write-Host '=== REA Sandbox v0.12.0: restricted MCP setup ===' -ForegroundColor Cyan
+Write-Host '=== REA Sandbox v0.12.4: restricted MCP setup ===' -ForegroundColor Cyan
 if (-not (Test-Path -LiteralPath $mirror -PathType Container)) {
     throw "Missing mapped folder: $mirror. Open the CORRECT .wsb and check the host folder exists."
 }
@@ -234,10 +234,15 @@ foreach ($item in @(
 $sampleName = 'Intel_HST_f59fdc8a-40f4-48f3-baa6-51b9a27e64b1_3.exe'
 $sampleExpectedSha256 = 'dd3ff68bc5c326691e787a8967807a144535fcb334e315c42053bf68ac9df25b'
 $sampleHost = Join-Path $mirror $sampleName
-Require-File $sampleHost
+$hasIntel = Test-Path -LiteralPath $sampleHost -PathType Leaf
+if ($hasIntel) {
 $sampleHash = (Get-FileHash -LiteralPath $sampleHost -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($sampleHash -ne $sampleExpectedSha256) { throw "Intel sample SHA-256 mismatch: $sampleHash" }
 Write-Host 'PASS: Intel sample already present in base folder; original hash verified. Sample will not be executed.' -ForegroundColor Green
+}
+$inspectionRoot = Join-Path $mirror 'reaSourceInspection'
+if (-not (Test-Path -LiteralPath $inspectionRoot -PathType Container)) { throw "Create $inspectionRoot on the host before launching." }
+if ((Get-Item -LiteralPath $inspectionRoot).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Inspection root cannot be a reparse point.' }
 # No interactive confirmation: launch from the .wsb is the user's requested action.
 # The WDAGUtilityAccount guard and guest-only workspace checks above remain required.
 $tunnelInputs = @(Find-TunnelInput -root $mirror)
@@ -338,6 +343,8 @@ Require-File $reaExe
 $mcpDir = Join-Path $guest 'mcp'
 New-Item -Path $mcpDir -ItemType Directory -Force | Out-Null
 Copy-Item -LiteralPath $guardSource -Destination (Join-Path $mcpDir 'rea-mcp-guard.js') -Force
+Copy-Item -LiteralPath (Join-Path $source 'rea-source-scope.js') -Destination $mcpDir -Force
+New-Item -Path (Join-Path $guest 'source-samples') -ItemType Directory -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $source 'rea-smoke.js') -Destination $mcpDir -Force
 New-Item -Path (Join-Path $guest 'samples') -ItemType Directory -Force | Out-Null
 
@@ -385,10 +392,12 @@ try {
 
 Write-Host '=== STAGING INTEL SAMPLE INTO GUEST STORAGE (NO EXECUTION) ===' -ForegroundColor Cyan
 $sampleGuest = Join-Path (Join-Path $guest 'samples') $sampleName
+if ($hasIntel) {
 Copy-Item -LiteralPath $sampleHost -Destination $sampleGuest -Force
 $guestHash = (Get-FileHash -LiteralPath $sampleGuest -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($guestHash -ne $sampleExpectedSha256) { throw "Intel sample guest copy SHA-256 mismatch: $guestHash" }
 Write-Host 'PASS: Intel scanner is available in disposable C:\App\samples; original SHA-256 verified.' -ForegroundColor Green
+}
 
 Write-Host '=== OFFLINE GHIDRA / REA DIAGNOSTICS ===' -ForegroundColor Cyan
 & $reaExe --version
@@ -403,14 +412,14 @@ Write-Host '=== LOCAL MCP SMOKE TEST (no remote key) ===' -ForegroundColor Cyan
 & $nodeExe (Join-Path $mcpDir 'rea-smoke.js')
 if ($LASTEXITCODE -ne 0) { throw 'Local MCP smoke test failed. See preceding output.' }
 Assert-REAFirewall -Tunnel $tunnelExe -Node $nodeExe -Java (Join-Path $jdkGuest 'bin\java.exe') -Ip $ipPin
-$ready = [ordered]@{ commit=$env:REA_BOOTSTRAP_COMMIT; version='0.12.0'; ip=$ipPin; tunnel=$tunnelExe; tunnelSha256=(Get-FileHash -LiteralPath $tunnelExe -Algorithm SHA256).Hash; guardSha256=(Get-FileHash -LiteralPath (Join-Path $mcpDir 'rea-mcp-guard.js') -Algorithm SHA256).Hash }
+$ready = [ordered]@{ commit=$env:REA_BOOTSTRAP_COMMIT; version='0.12.4'; ip=$ipPin; tunnel=$tunnelExe; tunnelSha256=(Get-FileHash -LiteralPath $tunnelExe -Algorithm SHA256).Hash; scopeSha256=(Get-FileHash -LiteralPath (Join-Path $mcpDir 'rea-source-scope.js') -Algorithm SHA256).Hash; guardSha256=(Get-FileHash -LiteralPath (Join-Path $mcpDir 'rea-mcp-guard.js') -Algorithm SHA256).Hash }
 $ready | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $mcpDir 'ready.json') -Encoding Ascii
 Write-Host '=== REA VM HARDENING CHECKPOINT ===' -ForegroundColor Green
 Write-Host 'Bootstrap diagnostics saved to C:\SandboxBootstrap\REA-Exchange\bootstrap.log on the HOST.' -ForegroundColor Green
 Write-Host 'The Sandbox is provisioned; outbound-default-deny and selected tunnel-client HTTPS exception installed.'
 Write-Host 'Clipboard redirection is enabled; printer, audio/video input and vGPU remain disabled.'
 Write-Host 'The ENTIRE C:\SandboxBootstrap base folder is mapped READ-ONLY. Do not put secrets or private files in it.'
-Write-Host 'Intel scanner was imported automatically from C:\SandboxBootstrap after firewall lockdown; no transfer step needed.'
+Write-Host 'Read-only source inspection is enabled at C:\SandboxBootstrap\reaSourceInspection. Optional Intel sample remains hash-pinned.'
 Write-Host 'The credential dialog opens automatically after diagnostics logging stops.' -ForegroundColor Cyan
 Write-Host 'Diagnostics are available on the HOST in REA-Exchange\bootstrap.log.'
 Write-Host 'The REA-VM tunnel ID and restricted runtime key will be requested locally; NEVER paste them into ChatGPT.'
@@ -419,7 +428,7 @@ Write-Host 'C:\App is disposable. Closing this Sandbox loses installed tools and
 } catch {
     $fatal = $_
     Remove-Item -LiteralPath 'C:\App\mcp\ready.json' -Force -ErrorAction SilentlyContinue
-    Write-Warning "REA v0.12.0 provisioning stopped: $($fatal.Exception.Message)"
+    Write-Warning "REA v0.12.4 provisioning stopped: $($fatal.Exception.Message)"
     try {
         Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True -DefaultInboundAction Block -DefaultOutboundAction Block -ErrorAction Stop
         if (-not (Get-NetFirewallRule -Name 'REA-VM-EMERGENCY-BLOCK-ALL' -ErrorAction SilentlyContinue)) {

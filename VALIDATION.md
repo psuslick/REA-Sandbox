@@ -49,3 +49,10 @@ Default mode is `latest`; legacy `confirm-latest` also launches without a prompt
 ## v0.12.3 visible copy progress
 
 The Git copy was the only Robocopy call suppressing both filenames and progress. Removed `/NP` and `/NFL`, added `/ETA`, and added a copy start/completion message with elapsed time. The preexisting QuickEdit adjustment is also applied before Git copying, using a distinct class name to avoid collisions with the later provisioning script. All later Robocopy invocations already expose progress and remain unchanged. Added regression assertions covering all Robocopy calls and QuickEdit ordering. The source-only checks and mock MCP tests are run below; live Windows console rendering and QuickEdit behavior remain unverified. No dependency layout, repository mode, WSB, security policy or provisioning scripts changed.
+
+## v0.12.4 scoped source inspection
+
+- Source package static checks and all previous mock MCP policy checks passed; source scope module and all gateway JavaScript passed `node --check`. No npm commands or downloads. No inspected executable was run.
+- Mock MCP end-to-end tests additionally verified directory pagination, UTF-8 source line paging, SHA-256, symlink and hardlink rejection, traversal/absolute/UNC/ADS/device-name rejection, unexpected arguments, document override rejection, malformed binary header rejection, and staged PE forwarding (synthetic fixture only).
+- Existing launcher files, WSB, shared dependency paths, QuickEdit setup, copy progress, firewall helper and credential helper are unchanged. Existing Intel pin remains optional. New source module is copied to guest-local MCP directory and hash-bound to readiness before tunnel startup.
+- Pending: actual Windows PowerShell and mapped-folder canonicalization/reparse behavior, real Ghidra opening of scoped binaries, authenticated tunnel exposure and client discovery of the three new source tools. The Linux mock test does not establish Windows isolation or real Ghidra behavior. No remote repository push or live permission change was performed.

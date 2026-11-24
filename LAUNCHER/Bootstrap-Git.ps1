@@ -20,8 +20,11 @@ try {
     $env:GIT_ALLOW_PROTOCOL = 'https'
     $env:GIT_LFS_SKIP_SMUDGE = '1'
     $env:GIT_TEMPLATE_DIR = Join-Path $guest 'git-empty-template'
-    $cfg = Get-Content -LiteralPath (Join-Path $mirror 'launcher\repo.local.json') -Raw | ConvertFrom-Json
-    if ($cfg.repository -cnotmatch '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git$' -or $cfg.repository -match '/(?:OWNER|REPOSITORY)(?:/|\.git$)') { throw 'Configure the exact public GitHub HTTPS clone URL in launcher\repo.local.json.' }
+    $configPath = Join-Path $mirror 'launcher\repo.json'
+    $localConfig = Join-Path $mirror 'launcher\repo.local.json'
+    if (Test-Path -LiteralPath $localConfig -PathType Leaf) { $configPath = $localConfig }
+    $cfg = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+    if ($cfg.repository -cnotmatch '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git$' -or $cfg.repository -match '/(?:OWNER|REPOSITORY)(?:/|\.git$)') { throw 'Configure the exact public GitHub HTTPS clone URL in launcher\repo.json or repo.local.json.' }
     if ($cfg.branch -cnotmatch '^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$' -or $cfg.branch -match '\.\.|//|/\.|\.lock(?:/|$)|/$') { throw 'Invalid branch.' }
     if ($cfg.mode -cnotin @('pinned','confirm-latest')) { throw 'Invalid mode.' }
     if ($cfg.mode -ceq 'pinned' -and $cfg.commit -cnotmatch '^[0-9a-f]{40}$') { throw 'Pinned mode requires a full lowercase Git commit SHA.' }

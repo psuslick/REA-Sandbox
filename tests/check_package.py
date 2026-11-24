@@ -1,6 +1,7 @@
 """Source-only checks. No PowerShell, dependencies, or supplied binaries executed."""
 from pathlib import Path
 import xml.etree.ElementTree as ET
+import json
 p=Path(__file__).resolve().parent.parent
 b=(p/'sandbox/Start-REA-Quick.ps1').read_text(encoding='utf-8-sig')
 t=(p/'sandbox/Start-Tunnel.ps1').read_text(encoding='utf-8-sig')
@@ -33,4 +34,7 @@ sha='dd3ff68bc5c326691e787a8967807a144535fcb334e315c42053bf68ac9df25b'
 assert sha in b and sha in t and sha in (p/'sandbox/rea-mcp-guard.js').read_text()
 assert not any(f.suffix.lower() in ('.exe','.dll','.zip','.jar','.msi') for f in p.rglob('*') if f.is_file() and '.git' not in f.parts)
 assert not (p/'launcher/repo.local.json').exists()
+assert json.loads((p/'launcher/repo.json').read_text()) == {'repository':'https://github.com/psuslick/REA-Sandbox.git','branch':'main','commit':'','mode':'confirm-latest'}
+assert g.index("'launcher\\repo.json'") < g.index("'launcher\\repo.local.json'") < g.index('Get-Content -LiteralPath $configPath')
+assert 'if (Test-Path -LiteralPath $localConfig -PathType Leaf) { $configPath = $localConfig }' in g
 print('PASS: source-only tree, Git approval and checkout ordering, guest-local paths, WSB flags, inherited firewall and credential markers, pinned target and tunnel hotfix')

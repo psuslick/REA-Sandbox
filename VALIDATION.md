@@ -33,3 +33,7 @@ This package is a candidate, not a validated Windows release. Use a fresh VM, ve
     REA_GUARD_TEST=1 REA_GUARD_REA="$PWD/tests/mock-rea.js" CONTROL_PLANE_API_KEY=mock OPENAI_API_KEY=mock CLOUDFLARED_TOKEN=mock node sandbox/rea-smoke.js
 
 The mock harness is for Linux/non-Windows test runners. No host npm installation is required.
+
+## Repository-specific configuration update
+
+The bundled default is `https://github.com/psuslick/REA-Sandbox.git`, branch `main`, mode `confirm-latest`. The bootstrap uses `repo.json` unless a local `repo.local.json` override exists. The source-only package check was rerun for this change. The actual remote, branch and public visibility could not be independently verified; live Windows and GitHub tests remain pending. The original Intel-only guard and all other sandbox scripts are unchanged.

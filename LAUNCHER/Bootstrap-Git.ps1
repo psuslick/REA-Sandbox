@@ -5,7 +5,7 @@ if ($env:USERNAME -ine 'WDAGUtilityAccount') { throw 'Refusing to run outside Wi
 $mirror = 'C:\SandboxBootstrap'
 $guest = 'C:\App'
 $repo = Join-Path $guest 'repo'
-$gitRoot = Join-Path $guest 'tools\mingit'
+$gitRoot = Join-Path $guest 'tools\git'
 $git = Join-Path $gitRoot 'cmd\git.exe'
 try {
     if (Test-Path -LiteralPath $guest) { throw 'Expected fresh guest workspace. Close and reopen Sandbox.' }
@@ -29,12 +29,13 @@ try {
     if ($cfg.mode -cnotin @('pinned','confirm-latest')) { throw 'Invalid mode.' }
     if ($cfg.mode -ceq 'pinned' -and $cfg.commit -cnotmatch '^[0-9a-f]{40}$') { throw 'Pinned mode requires a full lowercase Git commit SHA.' }
     if ($cfg.mode -ceq 'confirm-latest' -and $cfg.commit -ne '') { throw 'Clear commit for confirm-latest mode.' }
-    $src = Join-Path $mirror 'mingit'
-    if (-not (Test-Path -LiteralPath (Join-Path $src 'cmd\git.exe') -PathType Leaf)) { throw 'Stage trusted MinGit extracted under C:\SandboxBootstrap\mingit (cmd\git.exe must exist).' }
+    $src = Join-Path $mirror 'git'
+    if (-not (Test-Path -LiteralPath (Join-Path $src 'cmd\git.exe') -PathType Leaf)) { throw 'Existing shared Git not found: C:\SandboxBootstrap\git\cmd\git.exe. No download or host changes attempted.' }
+    Write-Host "Using existing shared Git: $src" -ForegroundColor Cyan
     # All Git executable files and all clone writes remain guest-local.
     New-Item -ItemType Directory -Path $gitRoot -Force | Out-Null
     & "$env:SystemRoot\System32\robocopy.exe" $src $gitRoot /E /XJ /R:1 /W:1 /NP /NFL /NDL
-    if ($LASTEXITCODE -ge 8 -or -not (Test-Path -LiteralPath $git -PathType Leaf)) { throw 'MinGit guest copy failed.' }
+    if ($LASTEXITCODE -ge 8 -or -not (Test-Path -LiteralPath $git -PathType Leaf)) { throw 'Shared Git guest copy failed.' }
     $opts = @('-c','credential.helper=','-c','http.sslVerify=true','-c','http.followRedirects=false','-c','core.hooksPath=C:/App/git-empty-hooks','-c','protocol.file.allow=never','-c','protocol.ext.allow=never','-c','submodule.recurse=false','-c','core.protectNTFS=true')
     & $git @opts --version
     if ($LASTEXITCODE -ne 0) { throw 'Git failed.' }

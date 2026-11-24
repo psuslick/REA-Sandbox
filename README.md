@@ -1,13 +1,13 @@
 # REA MCP Windows Sandbox
 
-**v0.12.0 — Git-managed launcher source.** This is a disposable, static-analysis-focused REA/Ghidra environment, not an air gap or a malware detonation platform. This revision deliberately retains the v0.11.0 Intel-only target allowlist. Changing targets is a separate security-sensitive change.
+**v0.12.1 — Shared-dependency launcher correction.** This is a disposable, static-analysis-focused REA/Ghidra environment, not an air gap or a malware detonation platform. This revision deliberately retains the v0.11.0 Intel-only target allowlist. Changing targets is a separate security-sensitive change.
 
 ## One-time migration
 
 1. Review this source tree and commit its contents to the root of your existing public launcher repository (not either Galactic Racer repository). Do not commit the old flat package, Intel binary, vendor tools, credentials, or diagnostics. The `.gitignore` is defense in depth, not secret scanning; it does not untrack already committed files.
 2. Keep the existing `C:\SandboxBootstrap` tool cache. From this source tree, copy the **launcher** directory into `C:\SandboxBootstrap\launcher`. This is the small, locally trusted launch anchor, not a second working copy of the application. The WSB maps the same read-only host root and separate writable `REA-Exchange` directory as before. Create `REA-Exchange` if missing. Do not put private files in either mapping.
 3. The launcher is preconfigured for `https://github.com/psuslick/REA-Sandbox.git`, branch `main`, in `confirm-latest` mode. No local JSON file is required. The guest clones the branch and requires local confirmation of the full reviewed commit SHA before execution. For optional pinned mode, copy `launcher\repo.json` to `C:\SandboxBootstrap\launcher\repo.local.json`, set `mode` to `pinned`, and set `commit` to the exact reviewed 40-character lowercase commit SHA. A local override takes precedence over the bundled default. Use pinned mode for repeatable validated runs. A Git commit is an identity, not proof of trust.
-4. Windows Sandbox does not normally include Git. Acquire the official x64 **MinGit** ZIP from the [Git for Windows releases](https://github.com/git-for-windows/git/releases), independently verify its publisher/distribution and integrity, and extract once to `C:\SandboxBootstrap\mingit` so `cmd\git.exe` exists immediately below that directory. Keep this trusted tool cache out of Git. The bootstrap copies it guest-local; it never installs Git or invokes npm on the host.
+4. Reuse the existing portable Git installation at `C:\SandboxBootstrap\git\cmd\git.exe`. Do not download MinGit, move, rename, or replace any shared dependency. The bootstrap copies the existing `git` directory into disposable `C:\App\tools\git` before invoking Git. All Git writes and npm operations remain guest-local.
 5. Double-click `C:\SandboxBootstrap\launcher\REA-MCP.wsb`. Do not run the guest scripts on the host. The guest clones into `C:\App\repo`, checks the selected commit, checks out detached HEAD, and starts the repository's `sandbox\Start-REA-Quick.ps1`. The protocol argument `git-v1` stays stable across compatible application releases. No source ZIP extraction or script replacement is necessary for future compatible repo updates.
 6. After the hardening checkpoint, enter your existing REA-VM tunnel ID and restricted runtime API key in the local masked dialog. Never commit or send either credential to an assistant. An optional non-secret `rea-vm-tunnel-id.txt` in the read-only local cache can prefill the ID; keep it out of Git.
 
@@ -24,7 +24,7 @@ Commit and push reviewed changes to the configured branch. Close the old VM and 
 
 ## Required existing local tools and analysis input
 
-Retain the existing `node-v24.22.3-win-x64`, `jdk25`, `ghidra_12.2_PUBLIC` directories and official tunnel-client Windows AMD64 archive (v0.0.21 was used in the earlier workflow; verify official release provenance independently). Keep the Intel file `Intel_HST_f59fdc8a-40f4-48f3-baa6-51b9a27e64b1_3.exe` in the read-only host root. Expected SHA-256: `dd3ff68bc5c326691e787a8967807a144535fcb334e315c42053bf68ac9df25b`. The binary is deliberately **not** included in or published to this repository. The two Galactic Racer ZIPs are not launch inputs in this revision.
+Retain the existing `git`, `node-v24.22.3-win-x64`, `jdk25`, `ghidra_12.2_PUBLIC` directories and official tunnel-client Windows AMD64 archive (v0.0.21 was used in the earlier workflow; verify official release provenance independently). Keep the Intel file `Intel_HST_f59fdc8a-40f4-48f3-baa6-51b9a27e64b1_3.exe` in the read-only host root. Expected SHA-256: `dd3ff68bc5c326691e787a8967807a144535fcb334e315c42053bf68ac9df25b`. The binary is deliberately **not** included in or published to this repository. The two Galactic Racer ZIPs are not launch inputs in this revision.
 
 ## Security boundaries
 

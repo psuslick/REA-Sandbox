@@ -16,7 +16,12 @@ assert [(f.findtext('SandboxFolder'),f.findtext('ReadOnly')) for f in x.findall(
 assert g.index('WDAGUtilityAccount')<g.index('robocopy.exe')<g.index('clone --no-checkout')<g.index('merge-base --is-ancestor')<g.index('ls-tree -r')<g.index('checkout --detach')<g.index('& $entry -LaunchVersion git-v1')
 assert "Read-Host 'Type the full commit SHA" in g and 'GIT_CONFIG_NOSYSTEM' in g and 'http.sslVerify=true' in g
 assert 'GIT_ALLOW_PROTOCOL' in g and 'credential.helper=' in g and 'core.hooksPath=' in g and 'submodule.recurse=false' in g
-assert "Join-Path $guest 'repo'" in g and "Join-Path $guest 'tools\\mingit'" in g
+assert "Join-Path $guest 'repo'" in g and "Join-Path $guest 'tools\\git'" in g
+assert "Join-Path $mirror 'git'" in g and "Join-Path $src 'cmd\\git.exe'" in g
+assert 'mingit' not in g.lower()
+assert '%~dp0Bootstrap-Git.ps1' in cmd and 'if not exist' in cmd
+assert "Join-Path $mirror 'node-v24.22.3-win-x64'" in b
+assert "Join-Path $mirror 'jdk25'" in b and "Join-Path $mirror 'ghidra_12.2_PUBLIC'" in b
 assert 'REA-VM-EMERGENCY-BLOCK-ALL' in g
 assert "$LaunchVersion -ne 'git-v1'" in b and '$source = $PSScriptRoot' in b and '$source = $PSScriptRoot' in t
 assert b.index('$ready | ConvertTo-Json') < b.index('Stop-Transcript -ErrorAction Stop') < b.index("& (Join-Path $source 'Start-Tunnel.ps1')")

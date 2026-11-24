@@ -18,7 +18,7 @@ No npm commands, downloads of npm packages, supplied Windows executables or game
 
 ## Pending real Windows verification
 
-- PowerShell 5.1 parsing and execution of the new bootstrap; MinGit staging and GitHub HTTPS clone from the user's actual repo.
+- PowerShell 5.1 parsing and execution of the new bootstrap; existing shared portable Git staging and GitHub HTTPS clone from the user's actual repo.
 - WSB startup, approval interaction and correct checkout on Windows; a rejected/mismatched commit must not launch provisioning or prompt for credentials.
 - Actual tool copying, npm provisioning, Ghidra doctor, MCP smoke, effective firewall and authenticated tunnel, including tunnel-hotfix behavior.
 - Confirm the host source mapping is read-only, Git writes are guest-only, and the original Intel target pin is unchanged.
@@ -37,3 +37,7 @@ The mock harness is for Linux/non-Windows test runners. No host npm installation
 ## Repository-specific configuration update
 
 The bundled default is `https://github.com/psuslick/REA-Sandbox.git`, branch `main`, mode `confirm-latest`. The bootstrap uses `repo.json` unless a local `repo.local.json` override exists. The source-only package check was rerun for this change. The actual remote, branch and public visibility could not be independently verified; live Windows and GitHub tests remain pending. The original Intel-only guard and all other sandbox scripts are unchanged.
+
+## v0.12.1 shared dependency correction
+
+The local bootstrap now reads the previously confirmed shared Git location `C:\SandboxBootstrap\git\cmd\git.exe`. No other shared dependency paths, WSB mappings, or sandbox provisioning/guard code changed. The CMD launcher checks for its sibling PowerShell bootstrap and reports the missing path explicitly. Source checks and mock tests are rerun below; live Windows validation remains pending.

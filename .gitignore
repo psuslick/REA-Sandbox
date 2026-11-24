@@ -17,6 +17,7 @@ connect-once.txt
 rea-vm-tunnel-id.txt
 node_modules/
 node-v*/
+/git/
 mingit/
 jdk*/
 ghidra*/
